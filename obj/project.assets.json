@@ -4016,26 +4016,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\vuong\\.nuget\\packages\\": {}
+    "C:\\Users\\dauhu\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\vuong\\Documents\\Thuc hanh wnc\\BTL\\OnlineClassManagement\\OnlineClassManagement.csproj",
+      "projectUniqueName": "D:\\BTL_WNC\\OnlineClassManagement.csproj",
       "projectName": "OnlineClassManagement",
-      "projectPath": "C:\\Users\\vuong\\Documents\\Thuc hanh wnc\\BTL\\OnlineClassManagement\\OnlineClassManagement.csproj",
-      "packagesPath": "C:\\Users\\vuong\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\vuong\\Documents\\Thuc hanh wnc\\BTL\\OnlineClassManagement\\obj\\",
+      "projectPath": "D:\\BTL_WNC\\OnlineClassManagement.csproj",
+      "packagesPath": "C:\\Users\\dauhu\\.nuget\\packages\\",
+      "outputPath": "D:\\BTL_WNC\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\vuong\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\dauhu\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4053,7 +4051,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
@@ -4091,7 +4090,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.415/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

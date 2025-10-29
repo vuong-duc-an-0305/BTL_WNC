@@ -1,8 +1,25 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    @if (User.IsInRole("Teacher"))
+    {
+        <div class="alert alert-success">
+            <h4>Chào mừng giáo viên @User.Identity.Name!</h4>
+            <p>Bạn đã đăng nhập thành công với vai trò giáo viên.</p>
+        </div>
+    }
+    else if (User.IsInRole("Student"))
+    {
+        <div class="alert alert-info">
+            <h4>Chào mừng @User.Identity.Name!</h4>
+            <p>Bạn đã đăng nhập với vai trò học sinh.</p>
+        </div>
+    }
+}
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>

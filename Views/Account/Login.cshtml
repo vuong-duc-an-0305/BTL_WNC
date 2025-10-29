@@ -1,0 +1,43 @@
+@model OnlineClassManagement.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<h2>@ViewData["Title"]</h2>
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form id="account" method="post" asp-controller="Account" asp-action="Login">
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" />
+                    <label asp-for="Email"></label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                    <label asp-for="Password"></label>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="checkbox mb-3">
+                    <label asp-for="RememberMe" class="form-label">
+                        <input class="form-check-input" asp-for="RememberMe" />
+                        @Html.DisplayNameFor(m => m.RememberMe)
+                    </label>
+                </div>
+
+                <div>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng nhập</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

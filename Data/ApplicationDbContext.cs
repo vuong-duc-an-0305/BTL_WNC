@@ -32,6 +32,11 @@ namespace OnlineClassManagement.Data
                 entity.Property(e => e.Email).IsRequired();
                 entity.Property(e => e.FullName).IsRequired();
                 entity.Property(e => e.Password).IsRequired();
+
+                // Cấu hình ánh xạ Enum 'Role' sang kiểu string trong CSDL
+                entity.Property(e => e.Role)
+                    .HasConversion<string>()
+                    .HasMaxLength(20); 
             });
 
             // Cấu hình Class
