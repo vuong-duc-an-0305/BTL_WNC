@@ -47,14 +47,12 @@ namespace OnlineClassManagement.Models
         /// <summary>
         /// Số điện thoại (tùy chọn)
         /// </summary>
-        [NotMapped]
         [StringLength(20, ErrorMessage = "Số điện thoại không được vượt quá 20 ký tự")]
         public string? PhoneNumber { get; set; }
 
         /// <summary>
         /// Trạng thái hoạt động của tài khoản
         /// </summary>
-        [NotMapped]
         public bool IsActive { get; set; } = true;
 
         /// <summary>
@@ -65,7 +63,6 @@ namespace OnlineClassManagement.Models
         /// <summary>
         /// Thời gian cập nhật cuối cùng
         /// </summary>
-        [NotMapped]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation Properties
