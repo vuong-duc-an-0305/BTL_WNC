@@ -1,0 +1,48 @@
+@model IEnumerable<OnlineClassManagement.Models.User>
+
+@{
+    ViewData["Title"] = "Danh sách Học viên";
+}
+
+<h1>Danh sách Học viên</h1>
+<h3>Lớp: @ViewBag.ClassName</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Chưa có học viên nào đăng ký lớp học này.</div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Họ và tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Ngày tham gia</th> <th>Trạng thái</th> </tr>
+        </thead>
+        <tbody>
+    @foreach (var student in Model) {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => student.FullName)</td>
+                <td>@Html.DisplayFor(modelItem => student.Email)</td>
+                <td>@Html.DisplayFor(modelItem => student.PhoneNumber)</td>
+                <td>@student.CreatedAt.ToString("dd/MM/yyyy")</td> <td>
+                    @if(student.IsActive)
+                    {
+                        <span class="badge bg-success">Hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Bị khóa</span>
+                    }
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+}
+<hr />
+<div>
+    <a asp-controller="Classes" asp-action="Details" asp-route-id="@ViewBag.ClassId" class="btn btn-secondary">Quay lại Lớp học</a>
+</div>

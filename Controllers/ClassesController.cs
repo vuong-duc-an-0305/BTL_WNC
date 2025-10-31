@@ -35,15 +35,14 @@ namespace OnlineClassManagement.Controllers
             return View(classes);
         }
 
-        // GET: /Classes/Details/5 (ĐÃ CẬP NHẬT)
+        // GET: /Classes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            // === THÊM MỚI: Nhận thông báo từ Action Edit ===
+            // Nhận thông báo từ Action Edit
             if (TempData["SuccessMessage"] != null)
             {
                 ViewBag.SuccessMessage = TempData["SuccessMessage"];
             }
-            // === KẾT THÚC THÊM MỚI ===
 
             if (id == null) return NotFound();
             var @class = await _context.Classes
@@ -59,7 +58,7 @@ namespace OnlineClassManagement.Controllers
             return View();
         }
 
-        // POST: /Classes/Create (Đã sửa lỗi TeacherId)
+        // POST: /Classes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -117,7 +116,7 @@ namespace OnlineClassManagement.Controllers
             return View(@class);
         }
 
-        // POST: /Classes/Edit/5 (ĐÃ CẬP NHẬT)
+        // POST: /Classes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, 
@@ -153,10 +152,8 @@ namespace OnlineClassManagement.Controllers
                     _context.Update(@classInDb);
                     await _context.SaveChangesAsync();
                     
-                    // === SỬA LỖI: Chuyển hướng về Details thay vì Index ===
                     TempData["SuccessMessage"] = "Cập nhật lớp học thành công!";
                     return RedirectToAction(nameof(Details), new { id = @classInDb.ClassId });
-                    // === KẾT THÚC SỬA LỖI ===
                 }
                 catch (DbUpdateException ex)
                 {
@@ -203,7 +200,7 @@ namespace OnlineClassManagement.Controllers
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Xóa lớp học thành công!";
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 TempData["ErrorMessage"] = "Không thể xóa lớp này. Lớp học có thể đang chứa dữ liệu (bài tập, sinh viên...).";
             }
@@ -212,6 +209,49 @@ namespace OnlineClassManagement.Controllers
                 TempData["ErrorMessage"] = $"Đã xảy ra lỗi: {ex.Message}";
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: /Classes/StudentList/5
+        public async Task<IActionResult> StudentList(int id)
+        {
+            int classId = id;
+            
+            // 1. Kiểm tra quyền sở hữu
+            if (!await CheckClassOwnershipAsync(classId))
+            {
+                return Forbid(); // Lỗi 403
+            }
+
+            var @class = await _context.Classes.FindAsync(classId);
+            if (@class == null) return NotFound();
+
+            // 2. Lấy danh sách học viên
+            var students = await _context.ClassEnrollments
+                .Where(e => e.ClassId == classId)
+                .Include(e => e.Student) // Tải thông tin User (Student)
+                .Select(e => e.Student)
+                .Where(s => s.Role == Models.Enums.UserRole.Student) // Đảm bảo là Student
+                .ToListAsync();
+
+            // 3. Gửi thông tin sang View
+            ViewBag.ClassId = classId;
+            ViewBag.ClassName = @class.ClassName;
+
+            return View(students);
+        }
+
+        // === HÀM HELPER KIỂM TRA QUYỀN SỞ HỮU ===
+        private async Task<bool> CheckClassOwnershipAsync(int classId)
+        {
+            var @class = await _context.Classes
+                .AsNoTracking() // Không cần theo dõi entity
+                .FirstOrDefaultAsync(c => c.ClassId == classId);
+                
+            if (@class == null || @class.TeacherId != CurrentTeacherId)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

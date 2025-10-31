@@ -3,9 +3,6 @@ using OnlineClassManagement.Models;
 
 namespace OnlineClassManagement.Data
 {
-    /// <summary>
-    /// DbContext cho ứng dụng quản lý lớp học
-    /// </summary>
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -42,13 +39,12 @@ namespace OnlineClassManagement.Data
             // Cấu hình Class
             modelBuilder.Entity<Class>(entity =>
             {
+                // ... (Cấu hình Class giữ nguyên)
                 entity.HasIndex(e => e.ClassCode).IsUnique();
                 entity.Property(e => e.ClassName).IsRequired();
                 entity.Property(e => e.ClassCode).IsRequired();
                 entity.Property(e => e.Semester).IsRequired();
                 entity.Property(e => e.AcademicYear).IsRequired();
-                
-                // Foreign key relationship
                 entity.HasOne(d => d.Teacher)
                     .WithMany(p => p.TaughtClasses)
                     .HasForeignKey(d => d.TeacherId)
@@ -58,20 +54,16 @@ namespace OnlineClassManagement.Data
             // Cấu hình ClassEnrollment
             modelBuilder.Entity<ClassEnrollment>(entity =>
             {
+                // ... (Cấu hình ClassEnrollment giữ nguyên)
                 entity.HasKey(e => e.EnrollmentId);
-                
-                // Foreign key relationships
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Enrollments)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasOne(d => d.Student)
                     .WithMany(p => p.Enrollments)
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                // Unique constraint: một học sinh chỉ có thể đăng ký một lớp một lần
                 entity.HasIndex(e => new { e.ClassId, e.StudentId }).IsUnique();
             });
 
@@ -82,48 +74,49 @@ namespace OnlineClassManagement.Data
                 entity.Property(e => e.DueDate).IsRequired();
                 entity.Property(e => e.MaxScore).HasPrecision(5, 2);
                 
-                // Foreign key relationship
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Assignments)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.Cascade);
+                
+                // === THÊM CẤU HÌNH NÀY ĐỂ SỬA LỖI ===
+                // Chỉ định EF lưu Enum 'AssignmentType' (nếu có) dưới dạng 'String'
+                // (Tôi giả định rằng bạn CÓ dùng Enum dựa trên lỗi này)
+                entity.Property(e => e.AssignmentType)
+                    .HasConversion<string>() 
+                    .HasMaxLength(50); // Khớp với NVARCHAR(50) trong CSDL
+                // === KẾT THÚC PHẦN THÊM ===
             });
 
             // Cấu hình Submission
             modelBuilder.Entity<Submission>(entity =>
             {
+                // ... (Cấu hình Submission giữ nguyên)
                 entity.Property(e => e.Score).HasPrecision(5, 2);
-                
-                // Foreign key relationships
                 entity.HasOne(d => d.Assignment)
                     .WithMany(p => p.Submissions)
                     .HasForeignKey(d => d.AssignmentId)
                     .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasOne(d => d.Student)
                     .WithMany(p => p.Submissions)
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                // Unique constraint: một học sinh chỉ có thể nộp một bài tập một lần
                 entity.HasIndex(e => new { e.AssignmentId, e.StudentId }).IsUnique();
             });
 
             // Cấu hình CourseMaterial
             modelBuilder.Entity<CourseMaterial>(entity =>
             {
+                // ... (Cấu hình CourseMaterial giữ nguyên)
                 entity.Property(e => e.Title).IsRequired();
                 entity.Property(e => e.FileUrl).IsRequired();
                 entity.Property(e => e.OriginalFileName).IsRequired();
                 entity.Property(e => e.FileType).IsRequired();
                 entity.Property(e => e.FileSize).IsRequired();
-                
-                // Foreign key relationships
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Materials)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasOne(d => d.UploadedByUser)
                     .WithMany(p => p.UploadedMaterials)
                     .HasForeignKey(d => d.UploadedBy)
@@ -133,15 +126,13 @@ namespace OnlineClassManagement.Data
             // Cấu hình Announcement
             modelBuilder.Entity<Announcement>(entity =>
             {
+                // ... (Cấu hình Announcement giữ nguyên)
                 entity.Property(e => e.Title).IsRequired();
                 entity.Property(e => e.Content).IsRequired();
-                
-                // Foreign key relationships
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Announcements)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasOne(d => d.CreatedByUser)
                     .WithMany(p => p.CreatedAnnouncements)
                     .HasForeignKey(d => d.CreatedBy)

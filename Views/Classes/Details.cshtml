@@ -11,8 +11,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
-<h1>Chi tiết: @Model.ClassName</h1>
 
+<h1>Chi tiết: @Model.ClassName</h1>
 <div>
     <hr />
     <dl class="row">
@@ -45,9 +45,9 @@
 
 <h3>Quản lý Lớp học</h3>
 <p>
-    <a href="#" class="btn btn-info">Xem Danh sách Học viên</a>
-    <a href="#" class="btn btn-info">Quản lý Tài liệu</a>
-    <a href="#" class="btn btn-info">Quản lý Bài tập</a>
+    <a asp-action="StudentList" asp-route-id="@Model.ClassId" class="btn btn-info">Xem Danh sách Học viên</a>   
+    <a asp-controller="CourseMaterials" asp-action="Index" asp-route-classId="@Model.ClassId" class="btn btn-info">Quản lý Tài liệu</a>
+    <a asp-controller="Assignments" asp-action="Index" asp-route-classId="@Model.ClassId" class="btn btn-info">Quản lý Bài tập</a>
 </p>
 
 <div>
