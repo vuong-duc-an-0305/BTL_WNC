@@ -59,13 +59,31 @@ namespace OnlineClassManagement.Controllers
             var assignment = await _context.Assignments
                 .Include(a => a.Class)
                 .FirstOrDefaultAsync(m => m.AssignmentId == id);
+                
             if (assignment == null) return NotFound();
+            
+            // Kiểm tra quyền sở hữu
             if (assignment.Class.TeacherId != CurrentTeacherId) return Forbid();
+
+            // === LẤY THÊM THÔNG TIN TÓM TẮT ===
+            // 1. Đếm tổng số sinh viên trong lớp
+            int totalStudents = await _context.ClassEnrollments
+                .CountAsync(e => e.ClassId == assignment.ClassId);
+
+            // 2. Đếm số bài đã nộp cho bài tập này
+            int submittedCount = await _context.Submissions
+                .CountAsync(s => s.AssignmentId == assignment.AssignmentId);
+            
+            ViewBag.TotalStudents = totalStudents;
+            ViewBag.SubmittedCount = submittedCount;
+            // === KẾT THÚC LẤY THÊM THÔNG TIN ===
+
             return View(assignment);
         }
 
         private void PopulateViewBagData()
         {
+            // Dùng cho dropdown chọn Loại bài tập
             ViewBag.AssignmentTypes = new SelectList(
                 Enum.GetValues(typeof(AssignmentType)), 
                 AssignmentType.Homework 
@@ -97,7 +115,6 @@ namespace OnlineClassManagement.Controllers
         // POST: /Assignments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // === THÊM 'Description' VÀO [Bind] ===
         public async Task<IActionResult> Create(
             [Bind("ClassId,Title,Description,Instructions,DueDate,MaxScore,AssignmentType,AllowLateSubmission,IsPublished")] Assignment assignment)
         {
@@ -146,7 +163,6 @@ namespace OnlineClassManagement.Controllers
         // POST: /Assignments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // === THÊM 'Description' VÀO [Bind] ===
         public async Task<IActionResult> Edit(int id, 
             [Bind("AssignmentId,ClassId,Title,Description,Instructions,DueDate,MaxScore,CreatedAt,AssignmentType,AllowLateSubmission,IsPublished")] Assignment assignmentFromForm)
         {
@@ -164,7 +180,7 @@ namespace OnlineClassManagement.Controllers
                     
                     // Cập nhật các trường
                     assignmentInDb.Title = assignmentFromForm.Title;
-                    assignmentInDb.Description = assignmentFromForm.Description; // === THÊM DÒNG NÀY ===
+                    assignmentInDb.Description = assignmentFromForm.Description;
                     assignmentInDb.Instructions = assignmentFromForm.Instructions;
                     assignmentInDb.DueDate = assignmentFromForm.DueDate;
                     assignmentInDb.MaxScore = assignmentFromForm.MaxScore;

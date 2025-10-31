@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineClassManagement.Models;
+// Thêm namespace cho Enums
+using OnlineClassManagement.Models.Enums;
 
 namespace OnlineClassManagement.Data
 {
@@ -29,8 +31,6 @@ namespace OnlineClassManagement.Data
                 entity.Property(e => e.Email).IsRequired();
                 entity.Property(e => e.FullName).IsRequired();
                 entity.Property(e => e.Password).IsRequired();
-
-                // Cấu hình ánh xạ Enum 'Role' sang kiểu string trong CSDL
                 entity.Property(e => e.Role)
                     .HasConversion<string>()
                     .HasMaxLength(20); 
@@ -39,7 +39,6 @@ namespace OnlineClassManagement.Data
             // Cấu hình Class
             modelBuilder.Entity<Class>(entity =>
             {
-                // ... (Cấu hình Class giữ nguyên)
                 entity.HasIndex(e => e.ClassCode).IsUnique();
                 entity.Property(e => e.ClassName).IsRequired();
                 entity.Property(e => e.ClassCode).IsRequired();
@@ -54,7 +53,6 @@ namespace OnlineClassManagement.Data
             // Cấu hình ClassEnrollment
             modelBuilder.Entity<ClassEnrollment>(entity =>
             {
-                // ... (Cấu hình ClassEnrollment giữ nguyên)
                 entity.HasKey(e => e.EnrollmentId);
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Enrollments)
@@ -65,6 +63,12 @@ namespace OnlineClassManagement.Data
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.Cascade);
                 entity.HasIndex(e => new { e.ClassId, e.StudentId }).IsUnique();
+                
+                // === CẬP NHẬT: Thêm chuyển đổi Enum (nếu bạn có Model cho nó) ===
+                // Giả sử EnrollmentStatus.cs bạn gửi là thuộc tính của ClassEnrollment
+                entity.Property(e => e.Status) // (Tôi đoán tên thuộc tính là 'Status')
+                    .HasConversion<string>() 
+                    .HasMaxLength(50);
             });
 
             // Cấu hình Assignment
@@ -73,25 +77,18 @@ namespace OnlineClassManagement.Data
                 entity.Property(e => e.Title).IsRequired();
                 entity.Property(e => e.DueDate).IsRequired();
                 entity.Property(e => e.MaxScore).HasPrecision(5, 2);
-                
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Assignments)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.Cascade);
-                
-                // === THÊM CẤU HÌNH NÀY ĐỂ SỬA LỖI ===
-                // Chỉ định EF lưu Enum 'AssignmentType' (nếu có) dưới dạng 'String'
-                // (Tôi giả định rằng bạn CÓ dùng Enum dựa trên lỗi này)
                 entity.Property(e => e.AssignmentType)
                     .HasConversion<string>() 
-                    .HasMaxLength(50); // Khớp với NVARCHAR(50) trong CSDL
-                // === KẾT THÚC PHẦN THÊM ===
+                    .HasMaxLength(50);
             });
 
             // Cấu hình Submission
             modelBuilder.Entity<Submission>(entity =>
             {
-                // ... (Cấu hình Submission giữ nguyên)
                 entity.Property(e => e.Score).HasPrecision(5, 2);
                 entity.HasOne(d => d.Assignment)
                     .WithMany(p => p.Submissions)
@@ -102,12 +99,18 @@ namespace OnlineClassManagement.Data
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.Cascade);
                 entity.HasIndex(e => new { e.AssignmentId, e.StudentId }).IsUnique();
+
+                // === THÊM CẤU HÌNH NÀY ĐỂ SỬA LỖI TIẾP THEO ===
+                // Chỉ định EF lưu Enum 'SubmissionStatus' (tôi đoán tên là Status)
+                entity.Property(e => e.Status) // (Tôi đoán tên thuộc tính là 'Status')
+                    .HasConversion<string>() 
+                    .HasMaxLength(50); // Khớp với NVARCHAR(50) trong CSDL
+                // === KẾT THÚC PHẦN THÊM ===
             });
 
             // Cấu hình CourseMaterial
             modelBuilder.Entity<CourseMaterial>(entity =>
             {
-                // ... (Cấu hình CourseMaterial giữ nguyên)
                 entity.Property(e => e.Title).IsRequired();
                 entity.Property(e => e.FileUrl).IsRequired();
                 entity.Property(e => e.OriginalFileName).IsRequired();
@@ -126,7 +129,6 @@ namespace OnlineClassManagement.Data
             // Cấu hình Announcement
             modelBuilder.Entity<Announcement>(entity =>
             {
-                // ... (Cấu hình Announcement giữ nguyên)
                 entity.Property(e => e.Title).IsRequired();
                 entity.Property(e => e.Content).IsRequired();
                 entity.HasOne(d => d.Class)
