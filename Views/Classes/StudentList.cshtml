@@ -2,11 +2,10 @@
 
 @{
     ViewData["Title"] = "Danh sách Học viên";
+    // (ViewBag.ClassId và ViewBag.ClassName đã được Controller gửi)
 }
 
-<h1>Danh sách Học viên</h1>
-<h3>Lớp: @ViewBag.ClassName</h3>
-
+@await Html.PartialAsync("_ClassDashboardNav")
 @if (!Model.Any())
 {
     <div class="alert alert-info">Chưa có học viên nào đăng ký lớp học này.</div>
@@ -19,7 +18,9 @@ else
                 <th>Họ và tên</th>
                 <th>Email</th>
                 <th>Số điện thoại</th>
-                <th>Ngày tham gia</th> <th>Trạng thái</th> </tr>
+                <th>Ngày tham gia</th>
+                <th>Trạng thái</th>
+            </tr>
         </thead>
         <tbody>
     @foreach (var student in Model) {
@@ -27,7 +28,8 @@ else
                 <td>@Html.DisplayFor(modelItem => student.FullName)</td>
                 <td>@Html.DisplayFor(modelItem => student.Email)</td>
                 <td>@Html.DisplayFor(modelItem => student.PhoneNumber)</td>
-                <td>@student.CreatedAt.ToString("dd/MM/yyyy")</td> <td>
+                <td>@student.CreatedAt.ToString("dd/MM/yyyy")</td>
+                <td>
                     @if(student.IsActive)
                     {
                         <span class="badge bg-success">Hoạt động</span>
@@ -42,7 +44,3 @@ else
         </tbody>
     </table>
 }
-<hr />
-<div>
-    <a asp-controller="Classes" asp-action="Details" asp-route-id="@ViewBag.ClassId" class="btn btn-secondary">Quay lại Lớp học</a>
-</div>

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Quản lý Bài tập";
+    // (ViewBag.ClassId và ViewBag.ClassName đã được Controller gửi)
 }
 @if (ViewBag.SuccessMessage != null)
 {
@@ -18,9 +19,7 @@
     </div>
 }
 
-<h1>Quản lý Bài tập</h1>
-<h3>Lớp: @ViewBag.ClassName</h3>
-
+@await Html.PartialAsync("_ClassDashboardNav")
 <p>
     <a asp-action="Create" asp-route-classId="@ViewBag.ClassId" class="btn btn-primary">Tạo bài tập mới</a>
 </p>
@@ -28,7 +27,8 @@
     <thead>
         <tr>
             <th>Tiêu đề</th>
-            <th>Mô tả</th> <th>Loại bài tập</th>
+            <th>Mô tả</th>
+            <th>Loại bài tập</th>
             <th>Hạn nộp</th>
             <th>Điểm tối đa</th>
             <th>Trạng thái</th>
@@ -39,7 +39,8 @@
 @foreach (var item in Model) {
         <tr>
             <td>@Html.DisplayFor(modelItem => item.Title)</td>
-            <td>@Html.DisplayFor(modelItem => item.Description)</td> <td>@Html.DisplayFor(modelItem => item.AssignmentType)</td>
+            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+            <td>@Html.DisplayFor(modelItem => item.AssignmentType)</td>
             <td>@item.DueDate.ToString("dd/MM/yyyy HH:mm")</td>
             <td>@Html.DisplayFor(modelItem => item.MaxScore)</td>
             <td>
@@ -53,7 +54,7 @@
                 }
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.AssignmentId" class="btn btn-sm btn-outline-info">Xem bài nộp</a>
+                <a asp-controller="Submissions" asp-action="Index" asp-route-assignmentId="@item.AssignmentId" class="btn btn-sm btn-outline-info">Xem bài nộp</a>
                 <a asp-action="Edit" asp-route-id="@item.AssignmentId" class="btn btn-sm btn-outline-primary">Sửa</a>
                 <a asp-action="Delete" asp-route-id="@item.AssignmentId" class="btn btn-sm btn-outline-danger">Xóa</a>
             </td>
@@ -61,8 +62,3 @@
 }
     </tbody>
 </table>
-
-<hr />
-<div>
-    <a asp-controller="Classes" asp-action="Details" asp-route-id="@ViewBag.ClassId" class="btn btn-secondary">Quay lại Lớp học</a>
-</div>

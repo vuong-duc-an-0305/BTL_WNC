@@ -5,14 +5,18 @@
 @{
     ViewData["Title"] = "Chấm bài tập";
     var requestToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    
+    // Báo cho _ClassDashboardNav biết ClassId và ClassName
+    ViewBag.ClassId = Model.AssignmentDetails.ClassId;
+    ViewBag.ClassName = Model.AssignmentDetails.Class.ClassName;
 }
 
-<h1>Chấm bài: @Model.AssignmentDetails.Title</h1>
-<h4>Lớp: @Model.AssignmentDetails.Class.ClassName</h4>
+@await Html.PartialAsync("_ClassDashboardNav")
+<h3>Chấm bài: @Model.AssignmentDetails.Title</h3>
 <p>Điểm tối đa: <strong>@Model.AssignmentDetails.MaxScore</strong></p>
-<hr />
 
 <div id="ajax-status-container"></div>
+
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>
@@ -79,8 +83,7 @@
                         <td>
                             <button class="btn btn-primary btn-sm btn-save-grade" 
                                     data-submission-id="@item.Submission.SubmissionId">Lưu</button>
-                            
-                            </td>
+                        </td>
                     }
                     else
                     {
@@ -97,24 +100,13 @@
     </table>
 </div>
 
-<hr />
-<div>
-    <a asp-controller="Assignments" 
-       asp-action="Index" 
-       asp-route-classId="@Model.AssignmentDetails.ClassId" 
-       class="btn btn-secondary">Quay lại Danh sách Bài tập</a>
-</div>
-
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const saveButtons = document.querySelectorAll('.btn-save-grade');
-            // Lấy khu vực thông báo chung
             const statusContainer = document.getElementById('ajax-status-container');
 
-            // Hàm để hiển thị thông báo (alert)
             function showAlert(message, isSuccess) {
-                // Xóa thông báo cũ (nếu có)
                 statusContainer.innerHTML = ''; 
 
                 const alertDiv = document.createElement('div');
@@ -128,7 +120,6 @@
                 
                 statusContainer.appendChild(alertDiv);
 
-                // Tự động ẩn sau 3 giây
                 setTimeout(() => {
                     alertDiv.classList.remove('show');
                     alertDiv.classList.add('hide');
@@ -147,8 +138,6 @@
 
                     const score = scoreInput.value;
                     const feedback = feedbackInput.value;
-
-                    // Vô hiệu hóa nút tạm thời
                     button.disabled = true;
 
                     fetch('/Submissions/Grade', {
@@ -162,17 +151,11 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Hiển thị thông báo thành công (ở đầu trang)
                             showAlert(data.message, true);
-                            
-                            // Cập nhật trạng thái (badge)
-                            statusText.textContent = data.status; // "Graded"
+                            statusText.textContent = data.status;
                             statusText.className = 'badge bg-success';
-                            
-                            // Cập nhật ngày chấm
                             gradedAtLabel.textContent = data.gradedAt;
                         } else {
-                            // Hiển thị thông báo lỗi (ở đầu trang)
                             showAlert(data.message, false);
                         }
                     })
@@ -181,7 +164,6 @@
                         showAlert('Lỗi mạng. Vui lòng thử lại.', false);
                     })
                     .finally(() => {
-                         // Bật lại nút sau khi hoàn tất
                         button.disabled = false;
                     });
                 });

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Quản lý Tài liệu";
+    // (ViewBag.ClassId và ViewBag.ClassName đã được Controller gửi)
 }
 
 @if (ViewBag.SuccessMessage != null)
@@ -19,9 +20,7 @@
     </div>
 }
 
-<h1>Quản lý Tài liệu</h1>
-<h3>Lớp: @ViewBag.ClassName</h3>
-
+@await Html.PartialAsync("_ClassDashboardNav")
 <p>
     <a asp-action="Create" asp-route-classId="@ViewBag.ClassId" class="btn btn-primary">Tải lên tài liệu mới</a>
 </p>
@@ -29,7 +28,8 @@
     <thead>
         <tr>
             <th>Tiêu đề</th>
-            <th>Mô tả</th> <th>Tên tệp gốc</th>
+            <th>Mô tả</th>
+            <th>Tên tệp gốc</th>
             <th>Kích thước</th>
             <th>Ngày tải lên</th>
             <th></th>
@@ -39,7 +39,8 @@
 @foreach (var item in Model) {
         <tr>
             <td>@Html.DisplayFor(modelItem => item.Title)</td>
-            <td>@Html.DisplayFor(modelItem => item.Description)</td> <td>@Html.DisplayFor(modelItem => item.OriginalFileName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+            <td>@Html.DisplayFor(modelItem => item.OriginalFileName)</td>
             <td>
                 @((item.FileSize / 1024).ToString("N0")) KB
             </td>
@@ -52,8 +53,3 @@
 }
     </tbody>
 </table>
-
-<hr />
-<div>
-    <a asp-controller="Classes" asp-action="Details" asp-route-id="@ViewBag.ClassId" class="btn btn-secondary">Quay lại Lớp học</a>
-</div>
